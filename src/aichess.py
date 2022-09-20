@@ -14,7 +14,6 @@ from itertools import permutations
 
 
 class Aichess():
-
     """
     A class to represent the game of chess.
 
@@ -46,79 +45,75 @@ class Aichess():
         self.depthMax = 8;
         self.checkMate = False
 
-
     def getCurrentState(self):
-    
+
         return self.myCurrentStateW
-    
-    
+
     def getListNextStatesW(self, myState):
-    
+
         self.chess.boardSim.getListNextStatesW(myState)
         self.listNextStates = self.chess.boardSim.listNextStates.copy()
 
         return self.listNextStates
 
-
     def isSameState(self, a, b):
-        
+
         isSameState1 = True
         # a and b are lists
         for k in range(len(a)):
-            
+
             if a[k] not in b:
                 isSameState1 = False
-                
+
         isSameState2 = True
         # a and b are lists
         for k in range(len(b)):
-            
+
             if b[k] not in a:
                 isSameState2 = False
-        
+
         isSameState = isSameState1 and isSameState2
         return isSameState
-    
-    
+
     def isVisited(self, mystate):
-    
-        if (len(self.listVisitedStates)>0):
+
+        if (len(self.listVisitedStates) > 0):
             perm_state = list(permutations(mystate))
-            
+
             isVisited = False
             for j in range(len(perm_state)):
-    
+
                 for k in range(len(self.listVisitedStates)):
-                    
+
                     if self.isSameState(list(perm_state[j]), self.listVisitedStates[k]):
-                        
                         isVisited = True
-            
+
             return isVisited
         else:
             return False
 
-
     def isCheckMate(self, mystate):
-        
-            return False
+        checkMateStates = [[[0, 0, 2], [2, 4, 6]], [[0, 1, 2], [2, 4, 6]], [[0, 2, 2], [2, 4, 6]],
+                           [[0, 6, 2], [2, 4, 6]], [[0, 7, 2], [2, 4, 6]]];
+        for state in checkMateStates:
+            if(mystate == state):
+                return True
+        return False
 
     def DepthFirstSearch(self, currentState, depth):
         """
         Check mate from currentStateW
         """
-        
+
         # your code here
-        
-        
 
     def BreadthFirstSearch(self, currentState, depth):
         """
         Check mate from currentStateW
         """
-        
+
         # your code
-            
+
 
 def translate(s):
     """
@@ -142,9 +137,8 @@ def translate(s):
 
 
 if __name__ == "__main__":
-
- #   if len(sys.argv) < 2:
- #       sys.exit(usage())
+    #   if len(sys.argv) < 2:
+    #       sys.exit(usage())
 
     # intiialize board
     TA = np.zeros((8, 8))
@@ -161,12 +155,12 @@ if __name__ == "__main__":
     aichess.chess.boardSim.print_board()
 
     # get list of next states for current state
-    print("current State",currentState)
-    
+    print("current State", currentState)
+
     # it uses board to get them... careful 
     aichess.getListNextStatesW(currentState)
-    print("list next states ",aichess.pathToTarget)
-    
+    print("list next states ", aichess.pathToTarget)
+
     # starting from current state find the end state (check mate) - recursive function
     # find the shortest path, initial depth 0
     depth = 0
@@ -174,20 +168,21 @@ if __name__ == "__main__":
     print("DFS End")
 
     # example move piece from start to end state
-    MovesToMake = ['1e','2e']
-    print("start: ",MovesToMake[0])
-    print("to: ",MovesToMake[1])
+    MovesToMake = ['1e', '2e']
+    print("start: ", MovesToMake[0])
+    print("to: ", MovesToMake[1])
 
     start = translate(MovesToMake[0])
     to = translate(MovesToMake[1])
 
-    print("start: ",start)
-    print("to: ",to)
+    print("start: ", start)
+    print("to: ", to)
 
     aichess.chess.moveSim(start, to)
 
     # aichess.chess.boardSim.print_board()
-    print("#Move sequence...  ",aichess.pathToTarget)
-    print("#Visited sequence...  ",aichess.listVisitedStates)
+    print("#Move sequence...  ", aichess.pathToTarget)
+    print("#Visited sequence...  ", aichess.listVisitedStates)
 
     print("#Current State...  ", aichess.chess.board.currentStateW)
+    print("#CheckMate States: ", aichess.isCheckMate(currentState))
