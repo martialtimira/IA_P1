@@ -95,9 +95,9 @@ class Aichess():
     def isCheckMate(self, mystate):
         checkMateStates = [[[0, 0, 2], [2, 4, 6]], [[0, 1, 2], [2, 4, 6]], [[0, 2, 2], [2, 4, 6]],
                            [[0, 6, 2], [2, 4, 6]], [[0, 7, 2], [2, 4, 6]]];
-        for state in checkMateStates:
-            if(mystate == state):
-                return True
+        if mystate in checkMateStates:
+            return True
+
         return False
 
     def DepthFirstSearch(self, currentState, depth):
