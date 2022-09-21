@@ -97,14 +97,13 @@ class Aichess():
                            [[0, 6, 2], [2, 4, 6]], [[0, 7, 2], [2, 4, 6]]];
         perm_state = list(permutations(mystate))
 
-        isCheckmate = False
         for j in range(len(perm_state)):
             for k in range(len(checkMateStates)):
 
                 if self.isSameState(list(perm_state[j]), checkMateStates[k]):
-                    isCheckmate = True
+                    self.checkMate = True
 
-            return isCheckmate
+            return self.checkMate
         else:
             return False
 
@@ -112,8 +111,24 @@ class Aichess():
         """
         Check mate from currentStateW
         """
-        self.pathToTarget.append(currentState)
-
+        pathList = [currentState]
+        if depth >= self.depthMax:
+            return None
+        elif self.isCheckMate(currentState):
+            return self.pathToTarget
+        else:
+            while pathList and not self.checkMate:
+                state = pathList[-1]
+                if not self.isVisited(state):
+                    self.getListNextStatesW(state)
+                    depth += 1
+                    for newState in self.listNextStates:
+                        print(newState)
+                        pathList.append(newState)
+                        if self.isCheckMate(newState):
+                            return state
+                    self.listVisitedStates.append(state)
+                pathList.pop()
 
 
 
@@ -171,12 +186,12 @@ if __name__ == "__main__":
 
     # it uses board to get them... careful 
     aichess.getListNextStatesW(currentState)
-    print("list next states ", aichess.pathToTarget)
+    print("list next states ", aichess.listNextStates)
 
     # starting from current state find the end state (check mate) - recursive function
     # find the shortest path, initial depth 0
     depth = 0
-    aichess.DepthFirstSearch(currentState, depth)
+    print(aichess.DepthFirstSearch(currentState, depth))
     print("DFS End")
 
     # example move piece from start to end state
@@ -194,6 +209,7 @@ if __name__ == "__main__":
 
     # aichess.chess.boardSim.print_board()
     print("#Move sequence...  ", aichess.pathToTarget)
+    print("#Visited States:  ", len(aichess.listVisitedStates))
     print("#Visited sequence...  ", aichess.listVisitedStates)
 
     print("#Current State...  ", aichess.chess.board.currentStateW)
