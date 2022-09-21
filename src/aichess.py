@@ -95,15 +95,27 @@ class Aichess():
     def isCheckMate(self, mystate):
         checkMateStates = [[[0, 0, 2], [2, 4, 6]], [[0, 1, 2], [2, 4, 6]], [[0, 2, 2], [2, 4, 6]],
                            [[0, 6, 2], [2, 4, 6]], [[0, 7, 2], [2, 4, 6]]];
-        if mystate in checkMateStates:
-            return True
+        perm_state = list(permutations(mystate))
 
-        return False
+        isCheckmate = False
+        for j in range(len(perm_state)):
+            for k in range(len(checkMateStates)):
+
+                if self.isSameState(list(perm_state[j]), checkMateStates[k]):
+                    isCheckmate = True
+
+            return isCheckmate
+        else:
+            return False
 
     def DepthFirstSearch(self, currentState, depth):
         """
         Check mate from currentStateW
         """
+        self.pathToTarget.append(currentState)
+
+
+
 
         # your code here
 
