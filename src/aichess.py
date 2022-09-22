@@ -153,8 +153,6 @@ class Aichess():
                     return True
 
                 self.chess.moveSim(to, start)
-                print("PTT: ", self.pathToTarget)
-                print("REMOVING from PTT: ", (start, to, piece))
                 self.pathToTarget.remove((start, to, piece))
 
         return False
