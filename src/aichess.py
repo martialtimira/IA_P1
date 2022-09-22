@@ -216,7 +216,7 @@ if __name__ == "__main__":
     # starting from current state find the end state (check mate) - recursive function
     # find the shortest path, initial depth 0
     depth = 0
-    print(aichess.DepthFirstSearch(currentState, depth))
+    aichess.DepthFirstSearch(currentState, depth)
     print("DFS End")
 
 
@@ -225,5 +225,5 @@ if __name__ == "__main__":
     print("#Visited States:  ", len(aichess.listVisitedStates))
     print("#Visited sequence...  ", aichess.listVisitedStates)
 
-    print("#Current State...  ", aichess.chess.board.currentStateW)
-    print("#CheckMate States: ", aichess.isCheckMate(currentState))
+    print("#Current State...  ", aichess.chess.boardSim.currentStateW)
+    print("#CheckMate Status: ", aichess.isCheckMate(currentState))
