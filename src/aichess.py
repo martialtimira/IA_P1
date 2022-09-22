@@ -140,8 +140,8 @@ class Aichess():
         if self.isCheckMate(currentState):
             return True
         if depth > self.depthMax:
-            print("Maxdepth reached")
             return False
+
         self.listVisitedStates.append(currentState)
         for state in self.getListNextStatesW(currentState):
             if not self.isVisited(state):
@@ -221,18 +221,6 @@ if __name__ == "__main__":
     print(aichess.DepthFirstSearch(currentState, depth))
     print("DFS End")
 
-    # example move piece from start to end state
-    MovesToMake = ['1e', '2e']
-    print("start: ", MovesToMake[0])
-    print("to: ", MovesToMake[1])
-
-    start = translate(MovesToMake[0])
-    to = translate(MovesToMake[1])
-
-    print("start: ", start)
-    print("to: ", to)
-
-    aichess.chess.moveSim(start, to)
 
     aichess.chess.boardSim.print_board()
     print("#Move sequence...  ", aichess.pathToTarget)
