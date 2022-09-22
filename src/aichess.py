@@ -104,8 +104,6 @@ class Aichess():
                     self.checkMate = True
 
             return self.checkMate
-        else:
-            return False
 
     def getMoveFromStates(self, currentState, nextState):
         """
@@ -226,4 +224,4 @@ if __name__ == "__main__":
     print("#Visited sequence...  ", aichess.listVisitedStates)
 
     print("#Current State...  ", aichess.chess.boardSim.currentStateW)
-    print("#CheckMate Status: ", aichess.isCheckMate(currentState))
+    print("#CheckMate Status: ", aichess.checkMate)
