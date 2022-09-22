@@ -107,32 +107,53 @@ class Aichess():
         else:
             return False
 
+    def getMoveFromStates(self, currentState, nextState):
+        """
+        Returns the "start" and "to" points of a move from its 2 states
+        Args:
+            currentState: Current State of the board
+            nextState: State of the Board after the move
+
+        Returns: Starting coordinates, To coordinates, piece ID
+
+        """
+        start = None
+        to = None
+        piece = None
+
+        for element in currentState:
+            if element not in nextState:
+                start = (element[0], element[1])
+                piece = element[2]
+        for element in nextState:
+            if element not in currentState:
+                to = (element[0], element[1])
+
+
+        return start, to, piece
     def DepthFirstSearch(self, currentState, depth):
         """
         Check mate from currentStateW
         """
-        pathList = [currentState]
-        if depth >= self.depthMax:
-            return None
-        elif self.isCheckMate(currentState):
-            return self.pathToTarget
-        else:
-            while pathList and not self.checkMate:
-                state = pathList[-1]
-                if not self.isVisited(state):
-                    self.getListNextStatesW(state)
-                    depth += 1
-                    for newState in self.listNextStates:
-                        print(newState)
-                        pathList.append(newState)
-                        if self.isCheckMate(newState):
-                            return state
-                    self.listVisitedStates.append(state)
-                pathList.pop()
-
-
-
         # your code here
+        self.pathToTarget.append(currentState)
+        self.listVisitedStates.append(currentState)
+        if depth >= self.depthMax: #alomejor necesita un -1
+            return None
+        if self.isCheckMate(currentState):
+            return self.pathToTarget
+        for state in self.getListNextStatesW(currentState):
+            if not self.isVisited(state):
+                #Hacer metodo que mire 2 estados, encuentre la diferencia y devuelva movimientos
+                #MOVESIM AQUI y alomejor añadir aqui PathTotarget Añades el State o el Start/end?
+                #en el pathToTarget, añades el nextstate o el movimiento de Start/end que te da tu metodo?
+                result = self.DepthFirstSearch(state, depth + 1)
+                if result is not None:
+                    return result
+                ##Deshacer movesim y alomejor el PathToTarget
+
+        self.pathToTarget.pop()
+        return None
 
     def BreadthFirstSearch(self, currentState, depth):
         """
@@ -188,6 +209,11 @@ if __name__ == "__main__":
     aichess.getListNextStatesW(currentState)
     print("list next states ", aichess.listNextStates)
 
+    testS, testT, testP = aichess.getMoveFromStates(currentState,
+                                                    aichess.getListNextStatesW(currentState)[1])
+    print("TEST Start: ", testS)
+    print("TEST To: ", testT)
+    print("TEST Piece: ", testP)
     # starting from current state find the end state (check mate) - recursive function
     # find the shortest path, initial depth 0
     depth = 0

@@ -80,7 +80,7 @@ class Chess():
         Moves a piece at `start` to `to`. Does nothing if there is no piece at the starting point.
         Does nothing if the piece at `start` belongs to the wrong color for the current turn.
         Does nothing if moving the piece from `start` to `to` is not a valid move.
-
+        y entonces los moveSim los haces aqui
         start : tup
             Position of a piece to be moved
 
