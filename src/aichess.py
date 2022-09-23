@@ -206,14 +206,12 @@ class Aichess():
             depth += 1
         return False
 
-
     def BestFirstSearch(self, currentState):
-        # Your Code here
+        #Your Code here
         return False
 
-
     def AStarSearch(self, currentState):
-        #Your Code here
+        # Your Code here
         return False
 
 
