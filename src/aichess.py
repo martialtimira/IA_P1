@@ -207,6 +207,15 @@ class Aichess():
         return False
 
 
+    def BestFirstSearch(self, currentState):
+        # Your Code here
+        return False
+
+
+    def AStarSearch(self, currentState):
+        #Your Code here
+        return False
+
 
 
 
