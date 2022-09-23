@@ -44,7 +44,6 @@ class Aichess():
         self.currentStateW = self.chess.boardSim.currentStateW;
         self.depthMax = 8;
         self.checkMate = False
-        self.itCount = 0
 
     def getCurrentState(self):
 
@@ -156,7 +155,7 @@ class Aichess():
 
         return False
 
-    def BreadthFirstSearch(self, q):
+    def BreadthFirstSearch(self, currentState, depth):
         """
         Check mate from currentStateW
 
@@ -206,6 +205,20 @@ class Aichess():
                     return False
             depth += 1
         return False
+
+    def BestFirstSearch(self, currentState):
+        #Your Code here
+        return False
+
+    def AStarSearch(self, currentState):
+        # Your Code here
+        return False
+
+
+
+
+
+
 
 def translate(s):
     """
@@ -258,7 +271,6 @@ if __name__ == "__main__":
     # starting from current state find the end state (check mate) - recursive function
     # find the shortest path, initial depth 0
     depth = 0
-    
     #aichess.DepthFirstSearch(currentState, depth)
     #print("DFS End")
     print(aichess.BreadthFirstSearch(currentState, depth))
