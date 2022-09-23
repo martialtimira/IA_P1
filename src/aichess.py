@@ -105,8 +105,6 @@ class Aichess():
                     self.checkMate = True
 
             return self.checkMate
-        else:
-            return False
 
     def getMoveFromStates(self, currentState, nextState):
         """
@@ -161,114 +159,53 @@ class Aichess():
     def BreadthFirstSearch(self, q):
         """
         Check mate from currentStateW
+
+        intentar que en vez de cojer el currentMove, a cada iteracion
+        del while, hacer todos los moves the moveQueue con un for, y luego
+        deshacerlos (lineas 173,174, 180, 194)
         """
+        moveQueue = []
+
         # your code
-        self.itCount +=1
-        if len(q) == 0:
-            return False
-        currentState = q.pop(0)
-
-        estat = currentState[0]
-        stackPath = currentState[1]
-        depth = currentState[2]
-
-        self.boardConfig(stackPath, estat)
-
-        if self.isCheckMate(estat):
-            self.moveSequence(stackPath.append(estat))
-            return True
-        if depth > self.depthMax:
-            return False
-
+        print("STARTING: ", self.listVisitedStates)
         self.listVisitedStates.append(currentState)
-        stack = stackPath.copy()
-        stack.append(estat)
-        for state in self.getListNextStatesW(estat):
-            if not self.isBFSVisited(state):
-                self.listVisitedStates.append([state, stack, depth + 1])
-                q.append([state, stack, depth + 1])
+        for state in self.getListNextStatesW(currentState):    #get initial set of moves in the queue
+            if not self.isVisited(state):
+                self.listVisitedStates.append(state)
+                start, to, piece = self.getMoveFromStates(currentState, state)
+                moveQueue.append([[start, to, piece]])
 
-        return self.BreadthFirstSearch(q)
+        while moveQueue:                                                #while there are still move sequences to explore
+            currentMove = moveQueue.pop(0)                        #get the sequence of moves
+            for move in currentMove:
+                self.chess.moveSim(move[0], move[1])
 
-    def statePerm(self, state):
-        finalState = []
+            for state in self.getListNextStatesW(self.chess.boardSim.currentStateW):
 
-        finalState.append([state[0], state[1]])
-        finalState.append([state[1], state[0]])
+                if self.isCheckMate(state):  # check if resulting state is CheckMate
+                    start, to, piece = self.getMoveFromStates(self.chess.boardSim.currentStateW, state)
+                    new_moveSequence = list(currentMove)
+                    new_move = [start, to, piece]
+                    new_moveSequence.append(new_move)
+                    self.chess.moveSim(start, to)
+                    self.pathToTarget = new_moveSequence
+                    return True
+                if not self.isVisited(state):
+                    start, to, piece = self.getMoveFromStates(self.chess.boardSim.currentStateW, state)
+                    new_moveSequence = list(currentMove)
+                    newMove = [start, to, piece]
+                    new_moveSequence.append(newMove)
+                    moveQueue.append(new_moveSequence)
+                    self.listVisitedStates.append(state)
 
-        return finalState
-    def isBFSVisited(self, state):
-        estat = self.statePerm(state)
-        vs = self.listVisitedStates
-        for s in vs:
-            if s[0] in estat:
-                return True
+            for i in range(len(currentMove)-1, -1, -1):
+                start = currentMove[i][1]
+                to = currentMove[i][0]
+                self.chess.moveSim(start,to)
+                if depth > 10000:
+                    return False
+            depth += 1
         return False
-
-    def getStack(self, state):
-        estat = list(permutations(state))
-        for i in range(len(self.listVisitedStates)):
-            for j in range(len(estat)):
-                if self.listVisitedStates[i][0] == list(estat[j]):
-                    return self.listVisitedStates[i][1]
-
-    def boardConfig(self, stateStack, objectiu):
-        boardStack = self.getStack(self.currentStateW)
-
-        if self.itCount > 16:
-            # 746 756
-            ...
-
-
-        if boardStack is None:
-            return
-
-        if len(boardStack) == 0:
-            start, to, piece = self.getMoveFromStates(stateStack[0], objectiu)
-            self.chess.moveSim(start, to)
-            return
-
-
-        fatherState = []
-
-        # Busquem estat comu
-        i = len(stateStack) - 1
-        found = False
-        while i >= 0 and not found:
-            j = len(boardStack) - 1
-            while j >= 0 and not found:
-                if stateStack[i] == boardStack[j]:
-                    fatherState = stateStack[i]
-                    found = True
-                j -= 1
-            i -= 1
-
-        i += 1 # Index d'estat comu a l'stack de l'estat objectiu
-
-        # Moure de l'estat actual a l'estat comu
-        while self.currentStateW != fatherState:
-            j = len(boardStack) - 1
-            start, to, piece = self.getMoveFromStates(self.currentStateW, boardStack[j])
-            self.chess.moveSim(start, to)
-            j -= 1
-
-        # Moure de l'estat comu a l'estat objectiu
-        while self.currentStateW != stateStack[-1]:
-            start, to, piece = self.getMoveFromStates(self.currentStateW, stateStack[i])
-            if start is not None and to is not None:
-                self.chess.moveSim(start, to)
-            i += 1
-        if self.currentStateW != objectiu:
-            start, to, piece = self.getMoveFromStates(self.currentStateW, objectiu)
-            self.chess.moveSim(start, to)
-
-        return
-
-    def moveSequence(self, stackPath):
-        for i in range(len(stackPath) - 1):
-            self.pathToTarget.append((self.getMoveFromStates(stackPath[i], stackPath[i + 1])))
-        return
-
 
 def translate(s):
     """
@@ -321,14 +258,11 @@ if __name__ == "__main__":
     # starting from current state find the end state (check mate) - recursive function
     # find the shortest path, initial depth 0
     depth = 0
-
-    estat = [currentState, [], depth]
-    q = [estat]
-
-    print(aichess.BreadthFirstSearch(q))
-
-    #print(aichess.DepthFirstSearch(currentState, depth))
-    print("DFS End")
+    
+    #aichess.DepthFirstSearch(currentState, depth)
+    #print("DFS End")
+    print(aichess.BreadthFirstSearch(currentState, depth))
+    print("BFS End")
 
 
     aichess.chess.boardSim.print_board()
@@ -336,5 +270,5 @@ if __name__ == "__main__":
     print("#Visited States:  ", len(aichess.listVisitedStates))
     print("#Visited sequence...  ", aichess.listVisitedStates)
 
-    print("#Current State...  ", aichess.chess.board.currentStateW)
-    print("#CheckMate States: ", aichess.isCheckMate(currentState))
+    print("#Current State...  ", aichess.chess.boardSim.currentStateW)
+    print("#CheckMate Status: ", aichess.checkMate)

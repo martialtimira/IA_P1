@@ -98,6 +98,7 @@ class Chess():
         if self.boardSim.board[to[0]][to[1]] != None:
             print("other piece there")
 
+
         target_piece = self.boardSim.board[start[0]][start[1]]
         
         # to ensure alternate moves - ica
