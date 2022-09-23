@@ -182,11 +182,11 @@ class Aichess():
                 self.chess.moveSim(move[0], move[1])
                 if (len(self.listVisitedStates) >= 74):
                     print("ListVisitedState[73]: ", self.listVisitedStates[73])
-            self.chess.boardSim.print_board()
-            print("AS:" ,self.chess.boardSim.currentStateW)
-            print("VS: ", self.listVisitedStates)
-            print("NEXT: ", self.getListNextStatesW(self.chess.boardSim.currentStateW))
-            print("VS: ", self.listVisitedStates)
+            #self.chess.boardSim.print_board()
+            #print("AS:" ,self.chess.boardSim.currentStateW)
+            #print("VS: ", self.listVisitedStates)
+            #print("NEXT: ", self.getListNextStatesW(self.chess.boardSim.currentStateW))
+            #print("VS: ", self.listVisitedStates)
             actualState = self.chess.boardSim.currentStateW
             #print("STATE: ", self.chess.boardSim.currentStateW)
             #print("PTT: ", self.pathToTarget)
@@ -196,24 +196,31 @@ class Aichess():
                 return True
             for state in self.getListNextStatesW(self.chess.boardSim.currentStateW):
                 ##print("VL: ", self.listVisitedStates)
+                if self.isCheckMate(state):  # check if resulting state is CheckMate
+                    start, to, piece = self.getMoveFromStates(self.chess.boardSim.currentStateW, state)
+                    new_moveSequence = list(currentMove)
+                    new_move = [start, to, piece]
+                    new_moveSequence.append(new_move)
+                    self.chess.moveSim(start, to)
+                    self.pathToTarget = new_moveSequence
+                    return True
                 if not self.isVisited(state):
                     start, to, piece = self.getMoveFromStates(self.chess.boardSim.currentStateW, state)
                     new_moveSequence = list(currentMove)
-                    print("PTT: ", currentMove)
+                    #print("PTT: ", currentMove)
                     newMove = [start, to, piece]
                     new_moveSequence.append(newMove)
-                    print("NEW PTT: ", new_moveSequence)
+                    #print("NEW PTT: ", new_moveSequence)
                     #print("NMS: ", new_moveSequence)
                     moveQueue.append(new_moveSequence)
                     self.listVisitedStates.append(state)
 
-                print("DONE")
+                #print("DONE")
             for i in range(len(currentMove)-1, -1, -1):
                 start = currentMove[i][1]
                 to = currentMove[i][0]
                 self.chess.moveSim(start,to)
                 if depth > 10000:
-                    print("YOs")
                     return False
             depth += 1
         return False
