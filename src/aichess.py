@@ -44,6 +44,7 @@ class Aichess():
         self.currentStateW = self.chess.boardSim.currentStateW;
         self.depthMax = 8;
         self.checkMate = False
+        self.itCount = 0
 
     def getCurrentState(self):
 
@@ -157,12 +158,116 @@ class Aichess():
 
         return False
 
-    def BreadthFirstSearch(self, currentState, depth):
+    def BreadthFirstSearch(self, q):
         """
         Check mate from currentStateW
         """
-
         # your code
+        self.itCount +=1
+        if len(q) == 0:
+            return False
+        currentState = q.pop(0)
+
+        estat = currentState[0]
+        stackPath = currentState[1]
+        depth = currentState[2]
+
+        self.boardConfig(stackPath, estat)
+
+        if self.isCheckMate(estat):
+            self.moveSequence(stackPath.append(estat))
+            return True
+        if depth > self.depthMax:
+            return False
+
+        self.listVisitedStates.append(currentState)
+        stack = stackPath.copy()
+        stack.append(estat)
+        for state in self.getListNextStatesW(estat):
+            if not self.isBFSVisited(state):
+                self.listVisitedStates.append([state, stack, depth + 1])
+                q.append([state, stack, depth + 1])
+
+        return self.BreadthFirstSearch(q)
+
+    def statePerm(self, state):
+        finalState = []
+
+        finalState.append([state[0], state[1]])
+        finalState.append([state[1], state[0]])
+
+        return finalState
+    def isBFSVisited(self, state):
+        estat = self.statePerm(state)
+        vs = self.listVisitedStates
+        for s in vs:
+            if s[0] in estat:
+                return True
+        return False
+
+    def getStack(self, state):
+        estat = list(permutations(state))
+        for i in range(len(self.listVisitedStates)):
+            for j in range(len(estat)):
+                if self.listVisitedStates[i][0] == list(estat[j]):
+                    return self.listVisitedStates[i][1]
+
+    def boardConfig(self, stateStack, objectiu):
+        boardStack = self.getStack(self.currentStateW)
+
+        if self.itCount > 16:
+            # 746 756
+            ...
+
+
+        if boardStack is None:
+            return
+
+        if len(boardStack) == 0:
+            start, to, piece = self.getMoveFromStates(stateStack[0], objectiu)
+            self.chess.moveSim(start, to)
+            return
+
+
+        fatherState = []
+
+        # Busquem estat comu
+        i = len(stateStack) - 1
+        found = False
+        while i >= 0 and not found:
+            j = len(boardStack) - 1
+            while j >= 0 and not found:
+                if stateStack[i] == boardStack[j]:
+                    fatherState = stateStack[i]
+                    found = True
+                j -= 1
+            i -= 1
+
+        i += 1 # Index d'estat comu a l'stack de l'estat objectiu
+
+        # Moure de l'estat actual a l'estat comu
+        while self.currentStateW != fatherState:
+            j = len(boardStack) - 1
+            start, to, piece = self.getMoveFromStates(self.currentStateW, boardStack[j])
+            self.chess.moveSim(start, to)
+            j -= 1
+
+        # Moure de l'estat comu a l'estat objectiu
+        while self.currentStateW != stateStack[-1]:
+            start, to, piece = self.getMoveFromStates(self.currentStateW, stateStack[i])
+            if start is not None and to is not None:
+                self.chess.moveSim(start, to)
+            i += 1
+        if self.currentStateW != objectiu:
+            start, to, piece = self.getMoveFromStates(self.currentStateW, objectiu)
+            self.chess.moveSim(start, to)
+
+        return
+
+    def moveSequence(self, stackPath):
+        for i in range(len(stackPath) - 1):
+            self.pathToTarget.append((self.getMoveFromStates(stackPath[i], stackPath[i + 1])))
+        return
 
 
 def translate(s):
@@ -216,7 +321,13 @@ if __name__ == "__main__":
     # starting from current state find the end state (check mate) - recursive function
     # find the shortest path, initial depth 0
     depth = 0
-    print(aichess.DepthFirstSearch(currentState, depth))
+
+    estat = [currentState, [], depth]
+    q = [estat]
+
+    print(aichess.BreadthFirstSearch(q))
+
+    #print(aichess.DepthFirstSearch(currentState, depth))
     print("DFS End")
 
 
