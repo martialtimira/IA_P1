@@ -177,25 +177,10 @@ class Aichess():
         while moveQueue:                                                #while there are still move sequences to explore
             currentMove = moveQueue.pop(0)                        #get the sequence of moves
             for move in currentMove:
-                if(len(self.listVisitedStates) >= 74):
-                    print("ListVisitedState[73]: ", self.listVisitedStates[73])
                 self.chess.moveSim(move[0], move[1])
-                if (len(self.listVisitedStates) >= 74):
-                    print("ListVisitedState[73]: ", self.listVisitedStates[73])
-            #self.chess.boardSim.print_board()
-            #print("AS:" ,self.chess.boardSim.currentStateW)
-            #print("VS: ", self.listVisitedStates)
-            #print("NEXT: ", self.getListNextStatesW(self.chess.boardSim.currentStateW))
-            #print("VS: ", self.listVisitedStates)
-            actualState = self.chess.boardSim.currentStateW
-            #print("STATE: ", self.chess.boardSim.currentStateW)
-            #print("PTT: ", self.pathToTarget)
-            #print("NEXTSTATES: ", self.getListNextStatesW(self.chess.boardSim.currentStateW))
-            if self.isCheckMate(actualState):                           #check if resulting state is CheckMate
-                self.pathToTarget = currentMove
-                return True
+
             for state in self.getListNextStatesW(self.chess.boardSim.currentStateW):
-                ##print("VL: ", self.listVisitedStates)
+
                 if self.isCheckMate(state):  # check if resulting state is CheckMate
                     start, to, piece = self.getMoveFromStates(self.chess.boardSim.currentStateW, state)
                     new_moveSequence = list(currentMove)
@@ -207,15 +192,11 @@ class Aichess():
                 if not self.isVisited(state):
                     start, to, piece = self.getMoveFromStates(self.chess.boardSim.currentStateW, state)
                     new_moveSequence = list(currentMove)
-                    #print("PTT: ", currentMove)
                     newMove = [start, to, piece]
                     new_moveSequence.append(newMove)
-                    #print("NEW PTT: ", new_moveSequence)
-                    #print("NMS: ", new_moveSequence)
                     moveQueue.append(new_moveSequence)
                     self.listVisitedStates.append(state)
 
-                #print("DONE")
             for i in range(len(currentMove)-1, -1, -1):
                 start = currentMove[i][1]
                 to = currentMove[i][0]
