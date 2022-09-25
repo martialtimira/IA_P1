@@ -119,12 +119,12 @@ class Aichess():
         to = None
         piece = None
 
-        for element in currentState:
-            if element not in nextState:
+        for element in currentState:                    #compare each element of both states, to find the one in the current state that isn't
+            if element not in nextState:                #on the next state, and define that one as the starting point, also define which piece it is
                 start = (element[0], element[1])
                 piece = element[2]
-        for element in nextState:
-            if element not in currentState:
+        for element in nextState:                       #repeat, but instead find the one in nextState that isn't in currentState, and
+            if element not in currentState:             #define that one as the "to" point.
                 to = (element[0], element[1])
 
 
@@ -163,43 +163,42 @@ class Aichess():
         moveQueue = []
 
         # your code
-        print("STARTING: ", self.listVisitedStates)
-        self.listVisitedStates.append(currentState)
-        for state in self.getListNextStatesW(currentState):    #get initial set of moves in the queue
+        self.listVisitedStates.append(currentState)             #add currentState to the list of visited States
+        for state in self.getListNextStatesW(currentState):     #get initial set of moves in the queue
             if not self.isVisited(state):
                 self.listVisitedStates.append(state)
                 start, to, piece = self.getMoveFromStates(currentState, state)
                 moveQueue.append([[start, to, piece]])
 
         while moveQueue:                                                #while there are still move sequences to explore
-            currentMove = moveQueue.pop(0)                        #get the sequence of moves
+            currentMove = moveQueue.pop(0)                              #get the sequence of moves
             for move in currentMove:
-                self.chess.moveSim(move[0], move[1])
+                self.chess.moveSim(move[0], move[1])                    #Execute the move sequence
 
-            for state in self.getListNextStatesW(self.chess.boardSim.currentStateW):
+            for state in self.getListNextStatesW(self.chess.boardSim.currentStateW):        #Iterate on all the next possible states
 
-                if self.isCheckMate(state):  # check if resulting state is CheckMate
-                    start, to, piece = self.getMoveFromStates(self.chess.boardSim.currentStateW, state)
+                if self.isCheckMate(state):                 # check if current state is CheckMate
+                    start, to, piece = self.getMoveFromStates(self.chess.boardSim.currentStateW, state) #get the move to become this next state
                     new_moveSequence = list(currentMove)
                     new_move = [start, to, piece]
-                    new_moveSequence.append(new_move)
+                    new_moveSequence.append(new_move)                                                   #add move to move sequence
                     self.chess.moveSim(start, to)
-                    self.pathToTarget = new_moveSequence
+                    self.pathToTarget = new_moveSequence                                                #set move sequence as path to target
                     return True
-                if not self.isVisited(state):
-                    start, to, piece = self.getMoveFromStates(self.chess.boardSim.currentStateW, state)
+                if not self.isVisited(state):                                      #check if current state has been visited
+                    start, to, piece = self.getMoveFromStates(self.chess.boardSim.currentStateW, state) #get the move to become this next state
                     new_moveSequence = list(currentMove)
                     newMove = [start, to, piece]
-                    new_moveSequence.append(newMove)
-                    moveQueue.append(new_moveSequence)
-                    self.listVisitedStates.append(state)
+                    new_moveSequence.append(newMove)                                #add move to move sequence
+                    moveQueue.append(new_moveSequence)                              #add sequence to the queue
+                    self.listVisitedStates.append(state)                            #add state to the visited list
 
-            for i in range(len(currentMove)-1, -1, -1):
+            for i in range(len(currentMove)-1, -1, -1):                             #undo the move sequence
                 start = currentMove[i][1]
                 to = currentMove[i][0]
                 self.chess.moveSim(start,to)
-                if depth > 10000:
-                    return False
+            if depth > 10000:
+                return False
             depth += 1
         return False
 
@@ -207,7 +206,6 @@ class Aichess():
         # Your Code here
         priorityQueue = []
 
-        print("STARTING: ", self.listVisitedStates)
         self.listVisitedStates.append(currentState)
         for state in self.getListNextStatesW(currentState):  # get initial set of moves in the queue
             if not self.isVisited(state):
@@ -254,7 +252,6 @@ class Aichess():
         # Your Code here
         priorityQueue = []
 
-        print("STARTING: ", self.listVisitedStates)
         self.listVisitedStates.append(currentState)
         for state in self.getListNextStatesW(currentState):  # get initial set of moves in the queue
             if not self.isVisited(state):
