@@ -135,23 +135,23 @@ class Aichess():
         Check mate from currentStateW
         """
         # your code here
-        if self.isCheckMate(currentState):
+        if self.isCheckMate(currentState):      #Check if current state is check mate
             return True
-        if depth > self.depthMax:
+        if depth > self.depthMax:               #Check if current depth is bigger than max depth
             return False
 
-        self.listVisitedStates.append(currentState)
-        for state in self.getListNextStatesW(currentState):
-            if not self.isVisited(state):
-                start, to, piece = self.getMoveFromStates(currentState, state)
-                self.pathToTarget.append((start, to, piece))
-                self.chess.moveSim(start, to)
+        self.listVisitedStates.append(currentState)         #Add current State to visited states
+        for state in self.getListNextStatesW(currentState):     #Iterate over all the possible next states
+            if not self.isVisited(state):                       #if the state currently iterating over, has not been visited
+                start, to, piece = self.getMoveFromStates(currentState, state)  #Get move coordinates to get to this state
+                self.pathToTarget.append((start, to, piece))                    #add move to the path
+                self.chess.moveSim(start, to)                                   #execute the move to get to this state
 
-                if self.DepthFirstSearch(state, depth + 1):
+                if self.DepthFirstSearch(state, depth + 1):                     #Run DFS recursively, if it finds check mate, return True
                     return True
 
-                self.chess.moveSim(to, start)
-                self.pathToTarget.remove((start, to, piece))
+                self.chess.moveSim(to, start)                                   #Undo the previous move
+                self.pathToTarget.remove((start, to, piece))                    #Remove the move from the path
 
         return False
 
@@ -159,9 +159,6 @@ class Aichess():
         """
         Check mate from currentStateW
 
-        intentar que en vez de cojer el currentMove, a cada iteracion
-        del while, hacer todos los moves the moveQueue con un for, y luego
-        deshacerlos (lineas 173,174, 180, 194)
         """
         moveQueue = []
 
