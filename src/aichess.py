@@ -212,11 +212,65 @@ class Aichess():
 
     def AStarSearch(self, currentState):
         # Your Code here
+        priorityQueue = []
+
+        print("STARTING: ", self.listVisitedStates)
+        self.listVisitedStates.append(currentState)
+        for state in self.getListNextStatesW(currentState):  # get initial set of moves in the queue
+            if not self.isVisited(state):
+                self.listVisitedStates.append(state)
+                start, to, piece = self.getMoveFromStates(currentState, state)
+                fN = self.heuristicDistance(to, piece, 0)
+                priorityQueue.append((fN, [[start, to, piece]]))
+
+        while priorityQueue:  # while there are still move sequences to explore
+            priorityQueue.sort(reverse=True)
+            currentMove = priorityQueue.pop()  # get the sequence of moves
+            print("Current move: ", currentMove)
+            for move in currentMove[1]:
+                self.chess.moveSim(move[0], move[1])
+
+            for state in self.getListNextStatesW(self.chess.boardSim.currentStateW):
+
+                if self.isCheckMate(state):  # check if resulting state is CheckMate
+                    start, to, piece = self.getMoveFromStates(self.chess.boardSim.currentStateW, state)
+                    new_moveSequence = list(currentMove)
+                    new_move = [start, to, piece]
+                    new_moveSequence.append(new_move)
+                    self.chess.moveSim(start, to)
+                    self.pathToTarget = new_moveSequence
+                    return True
+
+                if not self.isVisited(state):
+                    start, to, piece = self.getMoveFromStates(self.chess.boardSim.currentStateW, state)
+                    fN = self.heuristicDistance(to, piece, currentMove[0])
+                    new_moveSequence = list(currentMove[1])
+                    newMove = [start, to, piece]
+                    new_moveSequence.append(newMove)
+                    priorityQueue.append((fN, new_moveSequence))
+                    self.listVisitedStates.append(state)
+
+            for i in range(len(currentMove[1]) - 1, -1, -1):
+                start = currentMove[1][i][1]
+                to = currentMove[1][i][0]
+                self.chess.moveSim(start, to)
+
+
         return False
 
 
 
+    def heuristicDistance(self, to, piece, gN):
+        # Calcular distància manhattan
+        hN = 0
+        if piece == 2: # Torre
+            hN += to[0]
+            if to[1] == 4:
+                hN += 1
+        if piece == 6:
+            hN += np.abs(to[0] - 2) + np.abs(to[1] - 4)
 
+        return gN + hN
 
 
 
@@ -273,8 +327,10 @@ if __name__ == "__main__":
     depth = 0
     #aichess.DepthFirstSearch(currentState, depth)
     #print("DFS End")
-    print(aichess.BreadthFirstSearch(currentState, depth))
-    print("BFS End")
+    #print(aichess.BreadthFirstSearch(currentState, depth))
+    #print("BFS End")
+
+    print(aichess.AStarSearch(currentState))
 
 
     aichess.chess.boardSim.print_board()
